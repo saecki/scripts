@@ -40,11 +40,13 @@ class Arg:
 
 
 class Params:
-    Type = Param("Type", "type", "t", "<type>", "The type by default Application.")
+    Type = Param("Type", "type", "t", "<type>", "The type, by default `Application`.")
     Name = Param("Name", "name", "n", "<name>", "The display name of the application.")
-    Exec = Param("Exec", "exec", "e", "<file>", "The path to a file that will be executed.")
+    Exec = Param("Exec", "exec", "e", "<file>", "The path of the executable.")
+    Path = Param("Path", "path", "p", "<path>", "The working directory of the application")
+    StartupWmClass = Param("StartupWmClass", "startup-wm-class", "s", "<class>", "The window manager class.")
     Icon = Param("Icon", "icon", "i", "<icon file>", "A path to an icon.")
-    GlobalIcon = Param("Icon", "global-icon", "g", "<icon name>", "A global icon which is included in the icon theme.")
+    GlobalIcon = Param("Icon", "global-icon", "g", "<icon name>", "A global icon which is included in an icon theme.")
     Comment = Param("Comment", "comment", "c", "<comment>", "A comment.")
     Keywords = Param("Keywords", "keyword", "k", "<keyword>", "A keyword (multiple values are supported).")
     Categories = Param("Categories", "category", None, "<category>", "A category (multiple values are supported).")
@@ -168,6 +170,10 @@ def desktop_file(args):
     exec = get_path_arg(args, Params.Exec)
     string += to_string(exec)
 
+    string += to_string(get_path_arg(args, Params.Path))
+
+    string += to_string(get_path_arg(args, Params.StartupWmClass))
+
     icon = get_path_arg(args, Params.Icon)
     if icon is None:
         icon = get_arg(args, Params.GlobalIcon)
@@ -243,11 +249,10 @@ if __name__ == "__main__":
         filename = get_filename(args) + ".desktop"
         file_path = os.path.join(destination, filename)
 
-        with open(file_path, "w") as desktop_file:
-            desktop_file.write(content)
+        with open(file_path, "w") as file:
+            file.write(content)
             print("created " + filename)
             exit()
 
     print("not enough arguments")
     print(help_string())
-
